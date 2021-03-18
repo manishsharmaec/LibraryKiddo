@@ -26,7 +26,7 @@ def getArtificatId = { ->
 }
 
 def getGroupId = { ->
-    return "com.kiddolib"
+    return "kiddolib"
 }
 
 def getVersionName = { ->
