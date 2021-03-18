@@ -22,7 +22,7 @@ android.libraryVariants.all { variant ->
 }*/
 
 def getArtificatId = { ->
-    return "kiddolib"
+    return "subscription"
 }
 
 def getGroupId = { ->
@@ -30,7 +30,7 @@ def getGroupId = { ->
 }
 
 def getVersionName = { ->
-    return "1.0.2"
+    return "1.0.3"
 }
 
 android {
