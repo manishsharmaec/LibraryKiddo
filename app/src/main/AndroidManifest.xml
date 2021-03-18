@@ -7,7 +7,7 @@
                  android:supportsRtl="true"
                  android:theme="@style/AppTheme">
 
-       <!-- <activity
+       <activity
                 android:name=".TestClass"
                 android:label="TestClass" >
             <intent-filter>
@@ -15,7 +15,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>-->
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

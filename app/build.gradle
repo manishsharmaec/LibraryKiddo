@@ -1,24 +1,99 @@
 //apply plugin: 'com.android.application'
 apply plugin: 'com.android.library'
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties"))) //Set env variable GPR_USER & GPR_API_KEY if not adding a properties file
+
+def getArtificatId = { ->
+    return "kiddoLib"
+}
+
+def getVersionName = { ->
+    return "1.0.2"
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+           bar(MavenPublication) {
+                groupId 'com.kiddolib'
+                artifactId getArtificatId()
+                version getVersionName()
+                artifact("$buildDir/outputs/aar/${getArtificatId()}-debug.aar")
+            }
+
+        }
+    }
+}
+
+repositories {
+    maven {
+        name = "GitHubPackages"
+        /** Configure path of your package repository on Github
+         ** Replace GITHUB_USERID with your/organisation Github userID
+         ** and REPOSITORY with the repository name on GitHub
+         */
+        url = uri("https://maven.pkg.github.com/manishsharmaec/LibraryKiddo")
+        credentials {
+            /** Create github.properties in root project folder file with
+             ** gpr.usr=GITHUB_USER_ID & gpr.key=PERSONAL_ACCESS_TOKEN
+             ** Set env variable GPR_USER & GPR_API_KEY if not adding a properties file**/
+
+            username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
+            password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
+        }
+    }
+}
+
+/*// build a jar with source files
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+artifacts {
+    archives sourcesJar
+}
+
+// Build a jar file in addition to the default aar file
+android.libraryVariants.all { variant ->
+    def name = variant.buildType.name
+    def task = project.tasks.create "jar${name.capitalize()}", Jar
+    task.dependsOn variant.javaCompile
+    task.from variant.javaCompile.destinationDir
+    artifacts.add('archives', task);
+}*/
 
 android {
+    publishNonDefault true
+
     compileSdkVersion 28
     defaultConfig {
         minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0"
+        versionName getVersionName()
+        project.archivesBaseName = getArtificatId()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
+
+
+    }
 
 dependencies {
+
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
