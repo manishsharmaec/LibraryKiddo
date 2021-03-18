@@ -13,7 +13,7 @@ def getGroupId = { ->
 }
 
 def getVersionName = { ->
-    return "1.0.3"
+    return "1.0.4"
 }
 
 task sourceJar(type: Jar) {
@@ -56,7 +56,7 @@ afterEvaluate {
                 artifact(sourceJar)
 
 
-                pom.withXml {
+               /* pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
 
                     //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
@@ -66,7 +66,7 @@ afterEvaluate {
                         dependencyNode.appendNode('artifactId', it.name)
                         dependencyNode.appendNode('version', it.version)
                     }
-                }
+                }*/
             }
 
         }
