@@ -22,7 +22,7 @@ android.libraryVariants.all { variant ->
 }*/
 
 def getArtificatId = { ->
-    return "kiddoLib"
+    return "kiddolib"
 }
 
 def getGroupId = { ->
@@ -34,7 +34,6 @@ def getVersionName = { ->
 }
 
 android {
-    publishNonDefault true
 
     compileSdkVersion 28
     defaultConfig {
@@ -48,9 +47,11 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
