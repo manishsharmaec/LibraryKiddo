@@ -1,5 +1,5 @@
-apply plugin: 'com.android.application'
-//apply plugin: 'com.android.library'
+//apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply from: file('publish.gradle')
 
 
@@ -30,7 +30,7 @@ def getGroupId = { ->
 }
 
 def getVersionName = { ->
-    return "1.0.4"
+    return "1.0.8"
 }
 
 android {
@@ -38,7 +38,7 @@ android {
         config {
             keyAlias 'manish'
             keyPassword 'manish'
-            storeFile file('/Users/manish/Downloads/wally-master/Librarykiddo/app/key/Untitled')
+            storeFile file(getRootDir().getAbsolutePath()+'/app/key/Untitled')
             storePassword 'manish'
         }
     }
@@ -58,7 +58,9 @@ android {
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
-            proguardFile '/Users/manish/Downloads/wally-master/Librarykiddo/app/proguard-rules.pro'
+            proguardFile file(getRootDir().getAbsolutePath()+'/app/proguard-rules.pro')
+//            println(file(getRootDir().getAbsolutePath()))
+//            println 'A message which is logged at QUIET level'
         }
         debug {
             debuggable true
