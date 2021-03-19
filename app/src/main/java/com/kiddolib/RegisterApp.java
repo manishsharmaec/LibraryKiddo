@@ -85,9 +85,8 @@ public class RegisterApp{
     public static void fetchMember(String userId, final FetchUser user){
 
         if(InternetConnectivity.isInternetConncted(context)){
-            String BASE_URL = "https://api.revenuecat.com";
-            String my_url = "/v1/subscribers/";// Replace this with your own url
-            new MyHttpRequestTask(context,user).execute(BASE_URL+my_url,userId,APIKEY);
+
+            new MyHttpRequestTask(context,user).execute(userId,APIKEY);
         }else{
             Toast.makeText(context,"There is some issue with your internet",Toast.LENGTH_LONG).show();
 

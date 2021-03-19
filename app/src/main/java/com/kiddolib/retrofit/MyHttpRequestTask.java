@@ -16,89 +16,73 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public  class MyHttpRequestTask  extends AsyncTask<String,Integer,String> {
+public class MyHttpRequestTask extends AsyncTask<String, Integer, String> {
     final ProgressDialog progress;
     Context context;
     FetchUser fetchUser;
 
-    public MyHttpRequestTask(Context ct, FetchUser fetchUser){
+    public MyHttpRequestTask(Context ct, FetchUser fetchUser) {
         context = ct;
         progress = new ProgressDialog(context);
         this.fetchUser = fetchUser;
     }
-@Override
-protected String doInBackground(String... params) {
-        String my_url = params[0];
-        String my_data = params[1];
-        String my_key = params[2];
+
+    @Override
+    protected String doInBackground(String... params) {
+        String BASE_URL = "https://api.revenuecat.com";
+        String apiPath = "/v1/subscribers/";
+        String userId = params[0];
+        String my_key = params[1];
         try {
-            URL url = new URL("https://api.revenuecat.com/v1/subscribers/rc.test1");
-            HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+            URL url = new URL(BASE_URL + apiPath + userId);
+            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestProperty("Accept", "application/json");
-            httpURLConnection.setRequestProperty("Authorization", "Bearer JIUNSdylLYUbLieJqYuFJpTnLgpZeAtr");
+            httpURLConnection.setRequestProperty("Authorization", "Bearer " + my_key);
 
-        try{
+            try {
 
-     /*
-     //to tell the connection object that we will be wrting some data on the server and then will fetch the output result
-        httpURLConnection.setDoOutput(true);
-        // this is used for just in case we don't know about the data size associated with our request
-        httpURLConnection.setChunkedStreamingMode(0);
+                int responseCode = httpURLConnection.getResponseCode();
+                String responseMessage = httpURLConnection.getResponseMessage();
+                if (responseCode == 200 || responseCode == 201) {
+                    //successful
+                    System.out.print(responseCode);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+                    String output;
 
-     // to write tha data in our request
-        OutputStream outputStream = new BufferedOutputStream(httpURLConnection.getOutputStream());
-        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
-        outputStreamWriter.write(my_data);
-        outputStreamWriter.flush();
-        outputStreamWriter.close();*/
+                    StringBuffer response = new StringBuffer();
+                    while ((output = in.readLine()) != null) {
+                        response.append(output);
+                    }
 
-            int responseCode = httpURLConnection.getResponseCode();
-            String responseMessage = httpURLConnection.getResponseMessage();
-            if(responseCode==200||responseCode==201){
-                //successful
-                System.out.print(responseCode);
-                BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
-                String output;
+                    in.close();
 
-                StringBuffer response = new StringBuffer();
-                while ((output = in.readLine()) != null) {
-                    response.append(output);
+                    String jsonInString = response.toString();
+                    Log.e("Response:-", jsonInString);
+
+                    return jsonInString;
+
+                } else {
+                    //something went wrong with the api call
+                    fetchUser.onFailure(responseMessage);
+                    System.out.print("StatusCode failure:" + responseCode);
+                    return null;
                 }
 
-                in.close();
 
-                String jsonInString = response.toString();
-                Log.e("Response:-",  jsonInString);
-
-                return jsonInString;
-
-            }
-            else{
-                //something went wrong with the api call
-                fetchUser.onFailure(responseMessage);
-                System.out.print("StatusCode failure:"+responseCode);
-                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // this is done so that there are no open connections left when this task is going to complete
+                httpURLConnection.disconnect();
             }
 
 
-            // printing result from response
-
-//            return response.toString();
-
-        }catch (Exception e){
-        e.printStackTrace();
-        }finally {
-        // this is done so that there are no open connections left when this task is going to complete
-        httpURLConnection.disconnect();
-        }
-
-
-        }catch (Exception e){
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;
-        }
+    }
 
     @Override
     protected void onPreExecute() {
@@ -113,24 +97,23 @@ protected String doInBackground(String... params) {
     @Override
     protected void onPostExecute(String jsonInString) {
         super.onPostExecute(jsonInString);
-        if(progress!=null&& progress.isShowing())
-        progress.dismiss();
+        if (progress != null && progress.isShowing())
+            progress.dismiss();
 //        Log.e("onPostExecute",s);
 
 
         Gson gson = new Gson();
-        Data data= gson.fromJson(jsonInString, Data.class);
+        Data data = gson.fromJson(jsonInString, Data.class);
         MemberDetails memberDetails = new MemberDetails();
         UtilityClass ucl = new UtilityClass(data);
-        if(progress!=null&& progress.isShowing())
+        if (progress != null && progress.isShowing())
             progress.dismiss();
-        if(ucl.isValidUser()){
+        if (ucl.isValidUser()) {
             memberDetails.setExpiryDate(ucl.setexpiryDate());
             memberDetails.setMemberSince(ucl.isMemberSince());
             memberDetails.setMember(ucl.isMember());
             fetchUser.onSuccess(memberDetails);
-        }
-        else {
+        } else {
             memberDetails.setExpiryDate(null);
             memberDetails.setMemberSince(null);
             memberDetails.setMember(false);
