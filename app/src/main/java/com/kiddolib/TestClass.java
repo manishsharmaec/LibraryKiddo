@@ -3,14 +3,16 @@ package com.kiddolib;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.kiddolib.model.MemberDetails;
+import com.kiddolib.retrofit.MyHttpRequestTask;
 
-public class TestClass extends Activity {
+public class TestClass extends Activity{
     EditText editText;
     Button fetchUser;
     private String key=  "JIUNSdylLYUbLieJqYuFJpTnLgpZeAtr";
@@ -23,6 +25,8 @@ public class TestClass extends Activity {
          editText = (EditText)findViewById(R.id.inputId);
          fetchUser = (Button)findViewById(R.id.fetchUser);
 
+         RegisterApp registerApp =    RegisterApp.singleton();
+        registerApp.init(TestClass.this);
         RegisterApp.configureApp(key);
 
 
@@ -40,6 +44,7 @@ public class TestClass extends Activity {
                 }
                 else{
                     callApi(userId);
+//                    callHTTP(userId,key);
                 }
 
             }
@@ -48,17 +53,21 @@ public class TestClass extends Activity {
 
     }
 
-    private void callApi(String userID) {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle("Loading");
-        progress.setMessage("Wait while loading...");
-        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-        progress.show();
+   /* private void callHTTP(String userId,String key) {
+        String BASE_URL = "https://api.revenuecat.com";
+        String my_url = "/v1/subscribers/";// Replace this with your own url
+        new MyHttpRequestTask(TestClass.this,this).execute(BASE_URL+my_url,userId,key);
+    }*/
+
+
+
+    private void    callApi(String userID) {
+
         RegisterApp.fetchMember(userID, new FetchUser() {
             @Override
             public void onSuccess(MemberDetails memberDetails) {
-                progress.dismiss();
-                Log.e("exp date",memberDetails.getExpiryDate().toString());
+                Log.e("callApi method success",memberDetails.getExpiryDate().toString());
+
                 if(memberDetails.getExpiryDate()!=null){
                     Toast.makeText(TestClass.this,"Expiry date: "+memberDetails.getExpiryDate(),Toast.LENGTH_LONG).show();
 
@@ -78,11 +87,11 @@ public class TestClass extends Activity {
                 } else{
                     Toast.makeText(TestClass.this,"User not registered",Toast.LENGTH_LONG).show();
                 }
+
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                progress.dismiss();
                 Log.e("error",errorMessage);
 
             }

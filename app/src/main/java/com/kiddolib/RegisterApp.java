@@ -1,18 +1,26 @@
 package com.kiddolib;
 
+import android.app.Activity;
+import android.content.Context;
+import android.widget.Toast;
 import com.kiddolib.model.Data;
 import com.kiddolib.model.Entitlements;
 import com.kiddolib.model.MemberDetails;
 import com.kiddolib.retrofit.ApiService;
+import com.kiddolib.retrofit.MyHttpRequestTask;
 import com.kiddolib.retrofit.RestClient;
+import com.kiddolib.util.InternetConnectivity;
 import com.kiddolib.util.UtilityClass;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
 
 public class RegisterApp{
     private static String APIKEY=null;
     private static RegisterApp registerApp;
+    private static Context context;
+
+    public void init(Context context){
+        this.context = context;
+    }
 
     private RegisterApp(){
     }
@@ -23,12 +31,13 @@ public class RegisterApp{
         return registerApp;
     }
 
+
     public static void configureApp(String key){
         if(!key.equals("")&&key!=null)
             APIKEY = key;
     }
 
-    public static void fetchMember(String userId, final FetchUser user){
+   /* public static void fetchMember(String userId, final FetchUser user){
         if(!APIKEY.equals("")&&APIKEY!=null){
 
             ApiService apiService = RestClient.getClient().create(ApiService.class);
@@ -71,6 +80,20 @@ public class RegisterApp{
                 }
             });
         }
+    }*/
+
+    public static void fetchMember(String userId, final FetchUser user){
+
+        if(InternetConnectivity.isInternetConncted(context)){
+            String BASE_URL = "https://api.revenuecat.com";
+            String my_url = "/v1/subscribers/";// Replace this with your own url
+            new MyHttpRequestTask(context,user).execute(BASE_URL+my_url,userId,APIKEY);
+        }else{
+            Toast.makeText(context,"There is some issue with your internet",Toast.LENGTH_LONG).show();
+
+        }
+
+
     }
 
 

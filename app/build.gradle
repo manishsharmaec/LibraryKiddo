@@ -1,5 +1,5 @@
-//apply plugin: 'com.android.application'
-apply plugin: 'com.android.library'
+apply plugin: 'com.android.application'
+//apply plugin: 'com.android.library'
 apply from: file('publish.gradle')
 
 
@@ -34,7 +34,14 @@ def getVersionName = { ->
 }
 
 android {
-
+    signingConfigs {
+        config {
+            keyAlias 'manish'
+            keyPassword 'manish'
+            storeFile file('/Users/manish/Downloads/wally-master/Librarykiddo/app/key/Untitled')
+            storePassword 'manish'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         minSdkVersion 26
@@ -43,12 +50,15 @@ android {
         versionName getVersionName()
         project.archivesBaseName = getArtificatId()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            proguardFile '/Users/manish/Downloads/wally-master/Librarykiddo/app/proguard-rules.pro'
         }
         debug {
             debuggable true
@@ -56,24 +66,17 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-
+    productFlavors {
     }
+}
 
 dependencies {
-
-
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
     // retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
     implementation 'com.google.code.gson:gson:2.6.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
-
 
 }

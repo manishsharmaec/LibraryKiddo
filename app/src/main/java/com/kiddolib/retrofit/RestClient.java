@@ -1,11 +1,10 @@
 package com.kiddolib.retrofit;
 
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class RestClient {
-    private static Retrofit retrofit = null;
+   /* private static Retrofit retrofit = null;
     private static String BASE_URL = "https://api.revenuecat.com";
 
     public static Retrofit getClient() {
@@ -16,6 +15,6 @@ public class RestClient {
                 .build();
 
         return retrofit;
-    }
+    }*/
 
 }
