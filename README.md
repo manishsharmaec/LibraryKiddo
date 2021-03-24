@@ -25,3 +25,6 @@ To use this lib make below changes in your app gradle file:
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
     implementation(name:'kiddoLib', ext:'aar')
+    
+How to create a Github package or package dependency you can follow my medium article from here: 
+https://manishsharma007.medium.com/create-android-dependency-package-for-your-library-d6bf92fc220f
